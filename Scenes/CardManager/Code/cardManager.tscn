@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3 uid="uid://bjdqihrlcyy4j"]
+
+[ext_resource type="PackedScene" uid="uid://dxproonhau8jq" path="res://Scenes/GenericCard/Code/card.tscn" id="1_8gnco"]
+
+[node name="CardManager" type="Control"]
+layout_mode = 3
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 195.0
+offset_top = -125.0
+offset_right = 1010.0
+offset_bottom = 125.0
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.244776, 0.244776, 0.244776, 1)
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 10
+columns = 4
+
+[node name="Card" parent="GridContainer" instance=ExtResource("1_8gnco")]
+layout_mode = 2
+
+[node name="Card2" parent="GridContainer" instance=ExtResource("1_8gnco")]
+layout_mode = 2
+
+[node name="Card3" parent="GridContainer" instance=ExtResource("1_8gnco")]
+layout_mode = 2

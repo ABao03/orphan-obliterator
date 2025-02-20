@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c12mjokun0ktj"]
+
+[ext_resource type="Script" path="res://Scenes/GenericEnemy/Code/genericEnemy.gd" id="1_dih78"]
+[ext_resource type="Texture2D" uid="uid://dbmnb8boaf8lq" path="res://Scenes/EnemyManager/Assets/orphan.png" id="2_2vuv7"]
+
+[node name="TestEnemy" type="Node2D"]
+script = ExtResource("1_dih78")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_2vuv7")

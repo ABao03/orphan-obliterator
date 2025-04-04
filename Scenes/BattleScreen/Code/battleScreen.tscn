@@ -1,33 +1,49 @@
-[gd_scene load_steps=5 format=3 uid="uid://d33s2qfao8cj6"]
+[gd_scene load_steps=8 format=3 uid="uid://d33s2qfao8cj6"]
 
 [ext_resource type="PackedScene" uid="uid://c677gd5qkd5wt" path="res://Scenes/EnemyManager/Code/enemyManager.tscn" id="1_j8vpi"]
 [ext_resource type="PackedScene" uid="uid://cpv4o4c75hc3x" path="res://Scenes/Player/Code/player.tscn" id="2_plopg"]
-[ext_resource type="PackedScene" uid="uid://vr4oej6ep2lq" path="res://Scenes/ActionMenu/Code/actionMenu.tscn" id="3_p5vuy"]
+[ext_resource type="PackedScene" uid="uid://dv2537qge788u" path="res://TestScenes/testActionMenu/Code/testActionMenu.tscn" id="4_ay77q"]
 [ext_resource type="PackedScene" uid="uid://b40uikdgqm2tx" path="res://Scenes/AttackForecast/Code/attackForecast.tscn" id="4_ek5m2"]
+[ext_resource type="PackedScene" uid="uid://ejespp135kqf" path="res://Scenes/HoverMenu/Code/hoverMenu.tscn" id="5_cqbfu"]
+[ext_resource type="PackedScene" uid="uid://de8rmgfwo5e4p" path="res://Scenes/DamageNumbers/Code/damageNumbers.tscn" id="5_feh1m"]
+[ext_resource type="Texture2D" uid="uid://cgvxia7fhhc0e" path="res://Scenes/BattleScreen/Assets/oneMore.png" id="6_wyix2"]
 
 [node name="BattleScreen" type="Node2D"]
 
-[node name="BattleContainer" type="Control" parent="."]
+[node name="Background" type="CanvasLayer" parent="."]
+
+[node name="CutinEffects" type="CanvasLayer" parent="."]
+layer = 2
+visible = false
+
+[node name="TextureRect" type="TextureRect" parent="CutinEffects"]
+offset_left = 4.0
+offset_right = 1924.0
+offset_bottom = 1080.0
+texture = ExtResource("6_wyix2")
+
+[node name="Battle" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="BattleContainer" type="Control" parent="Battle"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1920.0
-offset_bottom = 1080.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="EnemyManager" parent="BattleContainer" instance=ExtResource("1_j8vpi")]
+[node name="EnemyManager" parent="Battle/BattleContainer" instance=ExtResource("1_j8vpi")]
 position = Vector2(850, 100)
 
-[node name="Player" parent="BattleContainer" instance=ExtResource("2_plopg")]
+[node name="Player" parent="Battle/BattleContainer" instance=ExtResource("2_plopg")]
 position = Vector2(448, 705)
 scale = Vector2(1.4, 1.4)
 
-[node name="ActionMenu" parent="BattleContainer" instance=ExtResource("3_p5vuy")]
+[node name="ActionMenu" parent="Battle/BattleContainer" instance=ExtResource("4_ay77q")]
 layout_mode = 1
 
-[node name="AttackForecast" parent="BattleContainer" instance=ExtResource("4_ek5m2")]
+[node name="AttackForecast" parent="Battle/BattleContainer" instance=ExtResource("4_ek5m2")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -38,6 +54,11 @@ offset_right = -20.0
 offset_bottom = 120.0
 grow_horizontal = 0
 
-[node name="TurnManager" type="Node" parent="."]
+[node name="DamageNumbers" parent="Battle/BattleContainer" instance=ExtResource("5_feh1m")]
 
-[editable path="BattleContainer/EnemyManager"]
+[node name="Hover" type="CanvasLayer" parent="."]
+layer = 4
+
+[node name="HoverMenu" parent="Hover" instance=ExtResource("5_cqbfu")]
+
+[editable path="Battle/BattleContainer/EnemyManager"]

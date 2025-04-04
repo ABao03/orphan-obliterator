@@ -1,11 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://3xt2v67t4n48"]
+[gd_scene load_steps=3 format=3 uid="uid://3xt2v67t4n48"]
 
 [ext_resource type="Script" path="res://Scenes/GenericEnemy/Code/genericEnemy.gd" id="1_21h3j"]
+[ext_resource type="Texture2D" uid="uid://wvxt56gtejo0" path="res://Scenes/GenericEnemy/Assets/dizzy.png" id="2_amgli"]
 
 [node name="Enemy" type="Node2D"]
 script = ExtResource("1_21h3j")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="StunnedSprite" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -250)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_amgli")
 
 [connection signal="tree_entered" from="." to="." method="_on_tree_entered"]
 [connection signal="tree_exited" from="." to="." method="_on_tree_exited"]

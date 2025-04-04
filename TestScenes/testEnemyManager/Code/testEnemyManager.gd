@@ -1,4 +1,4 @@
-class_name TestEnemyManager
+class_name EnemyManager
 extends Node2D
 
 # Enemy children
@@ -20,17 +20,17 @@ var enemyAnchor : Control
 func _ready() -> void:
 	enemyJsonData = loadEnemyJsonData()
 	enemyAttacksData = loadEnemyAttacksJsonData()
-	spawnEnemy()
+	spawnSpecificEnemy()
 
 
 #region ENEMY SPAWNING
-func spawnEnemy() -> void:
-	var randomEnemyIndex : int = randi_range(0, len(enemyJsonData) - 1)
-	var randomEnemyData = enemyJsonData[str(randomEnemyIndex)]
+func spawnSpecificEnemy() -> void:
+	var enemyIndex : int = 0
+	var enemyData = enemyJsonData[str(enemyIndex)]
 	
 	var newEnemy = ResourceLoader.load(genericEnemyScenePath)
 	var enemyInstance : GenericEnemy = newEnemy.instantiate()
-	enemyInstance.initializeEnemy(randomEnemyData)
+	enemyInstance.initializeEnemy(enemyData)
 	enemyInstance.initializeEnemyAttacks(enemyAttacksData)
 	
 	enemyAnchor = Control.new()

@@ -1,0 +1,20 @@
+{
+  "0": {
+	"cardName": "Close",
+	"cardRange": 0,
+	"cardCooldown": 0,
+	"cardDamage": 10
+  },
+  "1": {
+	"cardName": "Medium",
+	"cardRange": 1,
+	"cardCooldown": 2,
+	"cardDamage": 11
+  },
+  "2": {
+	"cardName": "Far",
+	"cardRange": 2,
+	"cardCooldown": 4,
+	"cardDamage": 12
+  }
+}

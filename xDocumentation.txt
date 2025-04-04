@@ -1,4 +1,7 @@
 Request signals -> calling the parent to provide a certain variable.
 Send signals -> called by request only, not called by the parent. sends a certain variable to a different node.
+Be careful to connect the signal AND copy-paste the code. If you only copy-paste the code it won't work.
 
 All assets must be png
+
+0 = close, 1 = medium, 2 = far

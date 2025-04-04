@@ -3,12 +3,17 @@ extends Node2D
 
 var currentPlayerRange : int
 
+var isStunned : bool = false
+var stunnedTurnCounter : int = 0
+
 var enemyStatsResource : EnemyStats
-var enemyRange : int
 var enemyAttacks : Array[EnemyAttack]
 var enemySprite : Sprite2D
+var stunnedSprite : Sprite2D
 
 var upcomingEnemyAttack : EnemyAttack
+
+@onready var sprite : Sprite2D = $Sprite2D
 
 var enemyTexturesPath = "res://Scenes/EnemyManager/Assets/"
 
@@ -24,13 +29,13 @@ func initializeEnemy(enemyData : Dictionary):
 	
 	# get enemy range by requesting it from the player
 	GlobalSignal.requestPlayerRange.emit()
-	enemyRange = currentPlayerRange
 	
 	enemyStatsResource.enemyAttackIndexes = enemyData["enemyAttacks"]
 	
 	setSpriteTexture(enemyTexturesPath + enemyStatsResource.enemyName.to_lower() + ".png")
 
 
+# called from enemyManager
 func initializeEnemyAttacks(enemyAttacksData : Dictionary):
 	for attackIndex in enemyStatsResource.enemyAttackIndexes:
 		var enemyAttackData = enemyAttacksData[str(attackIndex)]
@@ -38,8 +43,22 @@ func initializeEnemyAttacks(enemyAttacksData : Dictionary):
 		var enemyAttackResource = EnemyAttack.new()
 		enemyAttackResource.attackName = enemyAttackData["attackName"]
 		enemyAttackResource.attackRange = enemyAttackData["attackRange"]
+		enemyAttackResource.attackWeakRange = enemyAttackData["attackWeakRange"]
 		enemyAttackResource.attackDamage = enemyAttackData["attackDamage"]
 		enemyAttacks.append(enemyAttackResource)
+#endregion
+
+
+#region TURN ENDED
+func turnEnded():
+	if isStunned == false:
+		enemyPerformsAttack()
+	elif isStunned == true:
+		if stunnedTurnCounter == 0:
+			stunnedTurnCounter += 1
+		elif stunnedTurnCounter == 1:
+			unstunEnemy()
+			enemyDeclareAttack()
 #endregion
 
 
@@ -53,42 +72,93 @@ func enemyDeclareAttack():
 	GlobalSignal.enemyAttackDeclared.emit(randomlySelectedAttack)
 
 
-func enemyAttack():
-	
+func enemyPerformsAttack():
+	GlobalSignal.damagePlayer.emit(upcomingEnemyAttack)
 	
 	upcomingEnemyAttack = null
+	
+	enemyDeclareAttack()
+#endregion
+
+
+#region DAMAGE ENEMY
+func damageEnemy(cardDataResource : CardData):
+	var damageAmount = returnRealDamage(cardDataResource)
+	
+	if damageAmount > 0:
+		checkIfWeaknessWasHit()
+	
+	GlobalSignal.createDamageNumber.emit(damageAmount, sprite.global_position)
+	enemyStatsResource.enemyHP -= damageAmount
+	
+	if enemyStatsResource.enemyHP <= 0:
+		enemyDead()
+
+
+func checkIfWeaknessWasHit():
+	if currentPlayerRange == upcomingEnemyAttack.attackWeakRange:
+		stunEnemy()
+		GlobalSignal.enemyAttackDeclared.emit(null)
+
+
+func returnRealDamage(cardDataResource : CardData) -> int:
+	if currentPlayerRange > cardDataResource.cardRange:
+		return 0
+	elif currentPlayerRange == cardDataResource.cardRange:
+		return cardDataResource.cardDamage
+	else:
+		return floori(cardDataResource.cardDamage/4)
+
+
+func enemyDead():
+	queue_free()
 #endregion
 
 
 #region SET SPRITE TEXTURE
 func setSpriteTexture(texturePath : String):
 	enemySprite = $Sprite2D
+	stunnedSprite = $StunnedSprite
 	var texture = load(texturePath)
 	enemySprite.texture = texture
+
+
+func stunEnemy():
+	isStunned = true
+	stunnedSprite.visible = true
+
+
+func unstunEnemy():
+	stunnedTurnCounter = 0
+	isStunned = false
+	stunnedSprite.visible = false
 #endregion
 
 
 #region MESSING WITH ENEMY RANGE
 func updateSpriteScale():
-	if enemyRange == 0:
-		enemySprite.scale = Vector2(0.8, 0.8)
-	elif enemyRange == 1:
-		enemySprite.scale = Vector2(1, 1)
-	elif enemyRange == 2:
+	if currentPlayerRange == 0:
 		enemySprite.scale = Vector2(1.2, 1.2)
+		stunnedSprite.scale = Vector2(0.6, 0.6)
+	elif currentPlayerRange == 1:
+		enemySprite.scale = Vector2(1, 1)
+		stunnedSprite.scale = Vector2(0.5, 0.5)
+	elif currentPlayerRange == 2:
+		enemySprite.scale = Vector2(0.8, 0.8)
+		stunnedSprite.scale = Vector2(0.3, 0.3)
 
 
 # called from actionMenu
 func pushEnemyAway():
-	if enemyRange < 2:
-		enemyRange += 1
+	if currentPlayerRange < 2:
+		currentPlayerRange += 1
 	updateSpriteScale()
 
 
 # called from actionMenu
 func pullEnemyCloser():
-	if enemyRange > 0:
-		enemyRange -= 1
+	if currentPlayerRange > 0:
+		currentPlayerRange -= 1
 	updateSpriteScale()
 
 
@@ -115,13 +185,19 @@ func changeActionMenuRangeLabel(playerRange : int):
 func _on_tree_entered() -> void:
 	GlobalSignal.sendPlayerRange.connect(receivePlayerRange)
 	
-	GlobalSignal.plusRangeButtonPressed.connect(pullEnemyCloser)
-	GlobalSignal.minusRangeButtonPressed.connect(pushEnemyAway)
+	GlobalSignal.plusRangeButtonPressed.connect(pushEnemyAway)
+	GlobalSignal.minusRangeButtonPressed.connect(pullEnemyCloser)
+	
+	GlobalSignal.damageEnemy.connect(damageEnemy)
+	GlobalSignal.endedTurn.connect(turnEnded)
 
 
 func _on_tree_exited() -> void:
 	GlobalSignal.sendPlayerRange.disconnect(receivePlayerRange)
 	
-	GlobalSignal.plusRangeButtonPressed.disconnect(pullEnemyCloser)
-	GlobalSignal.minusRangeButtonPressed.disconnect(pushEnemyAway)
+	GlobalSignal.plusRangeButtonPressed.disconnect(pushEnemyAway)
+	GlobalSignal.minusRangeButtonPressed.disconnect(pullEnemyCloser)
+	
+	GlobalSignal.damageEnemy.disconnect(damageEnemy)
+	GlobalSignal.endedTurn.disconnect(turnEnded)
 #endregion

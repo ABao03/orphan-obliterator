@@ -2,6 +2,7 @@
   "0": {
 	"attackName": "7.62×25mm Tokarev",
 	"attackRange": 1,
+	"attackWeakRange": 2,
 	"attackDamage": 20
   }
 }

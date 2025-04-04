@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://c677gd5qkd5wt"]
+[gd_scene load_steps=2 format=3 uid="uid://b68tldkirljdy"]
 
-[ext_resource type="Script" path="res://Scenes/EnemyManager/Code/enemyManager.gd" id="1_jku7c"]
+[ext_resource type="Script" path="res://TestScenes/testEnemyManager/Code/testEnemyManager.gd" id="1_pa3mi"]
 
-[node name="EnemyManager" type="Node2D"]
-script = ExtResource("1_jku7c")
+[node name="TestEnemyManager" type="Node2D"]
+script = ExtResource("1_pa3mi")
 
 [node name="AnchorContainer" type="Control" parent="."]
 layout_mode = 3
@@ -36,18 +36,6 @@ offset_left = 800.0
 offset_top = 200.0
 offset_right = 800.0
 offset_bottom = 200.0
-
-[node name="OrphanHealthBar" type="ProgressBar" parent="."]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = 1275.0
-offset_top = 20.0
-offset_right = 1775.0
-offset_bottom = 60.0
-grow_horizontal = 0
-step = 1.0
-value = 100.0
 
 [connection signal="tree_entered" from="." to="." method="_on_tree_entered"]
 [connection signal="tree_exited" from="." to="." method="_on_tree_exited"]
